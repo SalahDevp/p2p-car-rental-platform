@@ -1,0 +1,15 @@
+# Node.js related
+node_modules
+npm-debug.log
+
+# Hardhat related
+artifacts
+cache
+
+# Environment variables
+.env
+
+# IDE related
+.vscode
+*.iml
+.idea
