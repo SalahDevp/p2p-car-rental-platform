@@ -18,6 +18,7 @@ contract CarChain {
         string color;
         string licensePlate;
         uint256 price;
+        uint256 minDeposit; //minimum deposit to rent the car
         bool available;
     }
 
@@ -25,7 +26,8 @@ contract CarChain {
         address payable walletAddress;
         string firstName;
         string lastName;
-        Car[] cars;
+        uint256 balance;
+        uint256[] carIds;
     }
 
     struct Renter {
@@ -33,102 +35,173 @@ contract CarChain {
         string firstName;
         string lastName;
         bool canRent;
-        bool active;
+        uint256 rentedCarId;
         uint256 balance;
-        uint256 due;
-        uint256 start;
-        uint256 end;
-        uint256 withdrawable;
+        uint256 reservedBalance; // balance that is reserved for the rent's deposit
+        uint256 rentStart;
+        uint256 rentEnd;
     }
 
     mapping(address => Renter) public renters;
     mapping(address => Owner) public owners;
+    mapping(uint256 => Car) public cars;
+    uint256[] public carIds;
 
+    function addOwner(
+        address payable walletAddress,
+        string memory firstName,
+        string memory lastName
+    ) public {
+        owners[walletAddress] = Owner(
+            walletAddress,
+            firstName,
+            lastName,
+            0,
+            new uint256[](0)
+        );
+    }
+
+    //generate id by hashing license plate
+    function generateCarId(
+        string memory licensePlate
+    ) private pure returns (uint256) {
+        return uint256(keccak256(abi.encodePacked(licensePlate)));
+    }
+
+
+
+//        --------------Renter functions --------------
+
+    function addCar(
+        string memory make,
+        string memory model,
+        string memory year,
+        string memory color,
+        string memory licensePlate,
+        uint256 price,
+        uint256 minDeposit,
+        bool available
+    ) public {
+        uint256 carId = generateCarId(licensePlate);
+        address ownerAddress = msg.sender;
+        cars[carId] = Car(
+            generateCarId(licensePlate),
+            make,
+            model,
+            year,
+            color,
+            licensePlate,
+            price,
+            minDeposit,
+            available
+        );
+        owners[ownerAddress].carIds.push(carId);
+        carIds.push(carId);
+    }
+
+    function getOwnerCars(address ownerAddress) public view returns (uint256[] memory) {
+        return owners[ownerAddress].carIds;
+    }
+    function getCar(uint256 carId) public view returns (Car memory) {
+        return cars[carId];
+    }
+
+    function getOwnerBalance(address ownerAddress) public view returns (uint256) {
+        return owners[ownerAddress].balance;
+    }
+
+    function ownerWithdraw() public payable {
+        address ownerAddress = msg.sender;
+        uint256 withdrawable = owners[ownerAddress].balance;
+        require(
+            withdrawable > 0,
+            "You have no money to withdraw"
+        );
+        
+        bool sent = payable(msg.sender).send(
+            withdrawable
+        );
+        require(sent, "Failed to send Ether");
+        owners[ownerAddress].balance = 0;
+    }
+
+    //          -------------- Renter functions --------------
     function addRenter(
         address payable walletAddress,
         string memory firstName,
-        string memory lastName,
-        bool canRent,
-        bool active,
-        uint256 balance,
-        uint256 due,
-        uint256 start,
-        uint256 end,
-        uint256 withdrawable
+        string memory lastName
     ) public {
         renters[walletAddress] = Renter(
             walletAddress,
             firstName,
             lastName,
-            canRent,
-            active,
-            balance,
-            due,
-            start,
-            end,
-            withdrawable
+            true,
+            0,
+            0,
+            0,
+            0,
+            0
         );
     }
 
-    // deposit eth to the contract but add balance to specific person
-    function deposit(address walletAddress) public payable {
+    // deposit eth in the rental account in the sc
+    function Deposit(address walletAddress) public payable {
         renters[walletAddress].balance += msg.value;
     }
 
-    // withdraw eth deposited - due
-    function withdrawMinusDue(address walletAddress) public payable {
+    // withdraw deposited eth (minus due amount if any)
+    function renterWithdraw() public payable {
+        address walletAddress = msg.sender;
+        uint256 withdrawable = renters[walletAddress].balance - renters[walletAddress].reservedBalance;
         require(
-            renters[walletAddress].walletAddress == msg.sender,
-            "You can't withdraw not yours money"
-        );
-        require(renters[walletAddress].due == 0, "Pay the amount due first");
-        require(renters[walletAddress].active == false);
-        require(
-            renters[walletAddress].balance > 0,
+            withdrawable > 0,
             "You have no money to withdraw"
         );
-        renters[walletAddress].withdrawable =
-            renters[walletAddress].balance -
-            renters[walletAddress].due;
+        
         bool sent = payable(msg.sender).send(
-            renters[walletAddress].withdrawable
+            withdrawable
         );
         require(sent, "Failed to send Ether");
-        renters[walletAddress].balance = renters[walletAddress].due;
-        renters[walletAddress].withdrawable = 0;
+        renters[walletAddress].balance -= withdrawable;
     }
 
     // pickUp a car
-    function pickUp(address walletAddress) public {
-        //require rewert transaction before gas is spend
-        require(renters[walletAddress].due == 0, "You have pending balance");
+    function pickUp(uint256 carId) public {
+        address renterAddress = msg.sender;
+        //check if the car is available
+        require(cars[carId].available == true, "Car is not available");
         require(
-            renters[walletAddress].canRent == true,
+            renters[renterAddress].canRent == true,
             "You can not rent at this time"
         );
         require(
-            renters[walletAddress].balance >= 1000000000000000,
-            "Please make a deposit first to rent a car"
+            renters[renterAddress].balance >= cars[carId].minDeposit,
+            "your deposit is too low"
         );
-        renters[walletAddress].active = true;
-        renters[walletAddress].start = block.timestamp;
-        renters[walletAddress].canRent = false;
+
+        renters[renterAddress].rentStart = block.timestamp;
+        renters[renterAddress].canRent = false;
+        renters[renterAddress].rentedCarId = carId;
+        renters[renterAddress].reservedBalance = cars[carId].minDeposit;
+        cars[carId].available = false;
     }
 
     // dropOff the car
-    function dropOff(address walletAddress) public {
+    function dropOff() public {
+        address walletAddress = msg.sender;
+        uint256 carId = renters[walletAddress].rentedCarId;
         require(
-            renters[walletAddress].walletAddress == msg.sender,
-            "You can't drop off car you don't picked up"
+            renters[walletAddress].rentedCarId != 0,
+            "you have to rent a car first"
         );
-        require(
-            renters[walletAddress].active == true,
-            "You don't renting car yet"
-        );
-        renters[walletAddress].active = false;
-        renters[walletAddress].end = block.timestamp;
         //set amount of due
-        setDue(walletAddress);
+        payDue(walletAddress, carId);
+
+        renters[walletAddress].canRent = true;
+        renters[walletAddress].reservedBalance = 0;
+        renters[walletAddress].rentedCarId = 0;
+        cars[carId].available = true;
+        renters[walletAddress].rentEnd = block.timestamp;
     }
 
     function renterTimespan(
@@ -138,26 +211,18 @@ contract CarChain {
         return end - start;
     }
 
-    function getTotalDuration(
+    function getRentDurationMinutes(
         address walletAddress
     ) public view returns (uint256) {
-        require(
-            renters[walletAddress].active == false,
-            "You have to drop off car first"
-        );
+        require( renters[walletAddress].rentedCarId != 0, "you have to rent a car first" );
         uint256 timespan = renterTimespan(
-            renters[walletAddress].start,
-            renters[walletAddress].end
+            renters[walletAddress].rentStart,
+            renters[walletAddress].rentEnd
         );
         uint256 timespanInMinutes = timespan / 60;
         return timespanInMinutes;
     }
 
-    // get contract balance
-    function getBalance() public view returns (uint256) {
-        // this reffers to the CONTRACT
-        return address(this).balance;
-    }
 
     //get renter's balance
     function balanceOfRenter(
@@ -166,31 +231,24 @@ contract CarChain {
         return renters[walletAddress].balance;
     }
 
-    // Set due amount | will take 0.002 eth / 5min
-    function setDue(address walletAddress) internal {
-        uint256 timespanMinutes = getTotalDuration(walletAddress);
-        uint256 twoMinuteIncrements = timespanMinutes / 2;
-        renters[walletAddress].due = twoMinuteIncrements * 1000000000000000;
-    }
-
-    //Make payment
-    function makePayment(address walletAddress) public payable {
+    function payDue(address walletAddress, uint256 carId) internal {
+        uint256 timespanMinutes = getRentDurationMinutes(walletAddress);
+        uint256 due = timespanMinutes * cars[carId].price;
         require(
-            renters[walletAddress].due > 0,
-            "You don't have to pay anything at this time"
-        );
-        require(
-            renters[walletAddress].balance >= renters[walletAddress].due,
+            renters[walletAddress].balance >= due,
             "You don't have enought funds to cover payment. Please make a deposit."
         );
-        renters[walletAddress].balance -= renters[walletAddress].due;
-        renters[walletAddress].canRent = true;
-        renters[walletAddress].due = 0;
-        renters[walletAddress].start = 0;
-        renters[walletAddress].end = 0;
+       renters[walletAddress].balance -= due; 
+
     }
 
     function canRentCar(address walletAddress) public view returns (bool) {
         return renters[walletAddress].canRent;
+    }
+    
+    //         -------------- Owner functions --------------
+    // get contract balance
+    function getContractBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 }
