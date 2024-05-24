@@ -1,0 +1,106 @@
+@import '../App.scss';
+.dashboard-fleet {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  margin-bottom: 2rem;
+
+  .fleet-container {
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+    scale: 90%;
+    .car-container {
+      display: flex;
+      width: 25%;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 0;
+      margin-top: 1rem;
+      box-sizing: border-box;
+      .car-description {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        font-size: 0.9rem;
+        overflow-wrap: break-word;
+        text-decoration: none;
+        margin: 1.5rem 0;
+        padding: 1rem 0;
+        color: #fff;
+        scale: 130%;
+        ul {
+          padding: 0;
+          margin: 0;
+          li {
+            list-style: none;
+            padding: 10px 0;
+            overflow: hidden;
+            display: block;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 1.2s 1.2s;
+            animation-fill-mode: forwards;
+            clear: both;
+            text-align: left;
+          }
+
+          svg {
+            margin: 0 0.6rem;
+            color: #181818;
+            transform: translateY(25%);
+            scale: 130%;
+          }
+          .gear-icon {
+            margin-right: 0.7rem;
+            margin-left: 0.4rem;
+            position: relative;
+            width: 20px;
+            float: left;
+            transform: translateY(-9%);
+            object-fit: cover;
+          }
+        }
+      }
+      .car-img {
+        width: 100%;
+      }
+      .smaller {
+        position: relative;
+        margin-bottom: 5%;
+        scale: 125%;
+        margin-top: 8%;
+      }
+      .button-box {
+        position: relative;
+        display: flex;
+        width: 100%;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+        text-align: center;
+        justify-content: center;
+        .rent-car-button {
+          flex: 1;
+          border: 1px solid $primary-color;
+          max-width: 96%;
+          font-size: 0.8rem;
+          text-align: center;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 570px) {
+  .rent-car-button {
+    font-size: 0.8rem !important;
+  }
+  .car-description {
+    scale: 100% !important;
+  }
+}

@@ -1,0 +1,44 @@
+@import '../App.scss';
+.home-page {
+  max-height: 100%;
+  max-width: 100%;
+  position: relative;
+  display: flex;
+  color: #fff;
+  justify-content: center;
+  justify-items: center;
+  flex-direction: column;
+  margin-left: 20%;
+  margin-right: 20%;
+  text-align: center;
+  padding-top: 10%;
+  align-items: center;
+
+  .home-title-box {
+    position: relative;
+    display: inline-block;
+    flex: 1;
+    .title {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    .title-prefix {
+      font-size: 2.5rem;
+      font-style: italic;
+      color: $primary-color;
+    }
+  }
+  .home-description-box {
+    flex: 1;
+    overflow-wrap: break-word;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    .title-description {
+      font-size: 1.2rem;
+    }
+  }
+  .choose-car {
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+  }
+}

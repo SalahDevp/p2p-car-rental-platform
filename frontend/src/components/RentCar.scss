@@ -1,0 +1,92 @@
+.rent-car-page {
+  max-width: 100%;
+  .welcome-text {
+    font-size: 1.3rem;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 4rem;
+  }
+  .pulpit-stats {
+    max-width: 100%;
+    display: flex;
+    justify-content: space-around;
+    box-sizing: border-box;
+    color: #fff;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    .pulpit-box {
+      position: relative;
+      border: 1px solid black;
+      // Height 0 and padding % help in make responsive square
+      width: 30%;
+      height: 0;
+      padding-bottom: 18%;
+      box-sizing: border-box;
+      border-radius: 8px;
+      &.active {
+        border: 2px solid red;
+        &:after {
+          content: 'On Going.';
+        }
+      }
+      p {
+        margin-top: 0;
+        padding-left: 6px;
+        padding-top: 4px;
+        width: 45%;
+        font-size: 1rem;
+      }
+
+      pre {
+        width: 45%;
+        padding-left: 8px;
+        font-size: 1.6rem;
+        text-align: center;
+      }
+      .pulpit-icon {
+        position: absolute;
+        font-size: 400%;
+        right: 2%;
+        top: 18%;
+      }
+    }
+  }
+  .pulpit-payments {
+    position: relative;
+    display: flex;
+    max-width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 3rem;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    color: #181818;
+    form {
+      margin-bottom: 1.8rem;
+    }
+    .payment-input {
+      max-width: 100%;
+    }
+    .deposit-eth-box {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+      box-sizing: border-box;
+      .form-deposit-button {
+        margin-top: 1rem;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 570px) {
+  .pulpit-icon {
+    position: absolute;
+    font-size: 350% !important;
+  }
+  .pulpit-payments {
+  }
+}

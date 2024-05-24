@@ -1,0 +1,25 @@
+.dashboard-page {
+  position: relative;
+  display: flex;
+  max-height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+input {
+  display: block;
+  font-size: 1.3rem;
+  background-color: transparent;
+  color: white;
+  border: 0;
+  padding: 5px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: -5px 9px 30px 12px #181818;
+  border-radius: 6px;
+}
+.dashboard-top {
+  display: block;
+}
+.dashboard-fleet-row {
+}

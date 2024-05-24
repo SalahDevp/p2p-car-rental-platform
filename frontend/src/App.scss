@@ -1,0 +1,17 @@
+$primary-color: #02d0ff;
+@import "animate.css";
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital@0;1&display=swap");
+
+body {
+  font-family: "Space Mono", monospace;
+  overflow-x: hidden;
+}
+
+@media screen and (max-width: 570px) {
+  h1 {
+    font-size: 2rem !important;
+  }
+  .button-class {
+    scale: 80%;
+  }
+}
