@@ -1,5 +1,5 @@
 import "./DashboardForm.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { register } from "../features/register/checkRegistrationSlice";
 
@@ -8,24 +8,40 @@ export default function DashboardForm({ contract, provider }) {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("renter");
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     if (!name || !lastName) return;
-    const addRenter = await contract.addRenter(currentAddress, name, lastName);
-    await addRenter.wait();
+    if (role === "renter") {
+      const addRenter = await contract.addRenter(
+        currentAddress,
+        name,
+        lastName
+      );
+      await addRenter.wait();
+    } else {
+      const addOwner = await contract.addOwner(currentAddress, name, lastName);
+      await addOwner.wait();
+    }
     window.location.reload();
   };
 
-  const canRent = async () => {
-    const canRentCar = await contract.canRentCar(currentAddress);
-    const currentRenter = await contract.renters(currentAddress);
-    const name = currentRenter[1];
-    if (canRentCar || name.length > 0) {
-      dispatch(register());
+  const checkRegistered = async () => {
+    const renter = await contract.renters(currentAddress);
+    const renterWallet = renter[0];
+    const owner = await contract.owners(currentAddress);
+    const ownerWallet = owner[0];
+    if (renterWallet === currentAddress || ownerWallet === currentAddress) {
+      dispatch(
+        register({ role: renterWallet === currentAddress ? "renter" : "owner" })
+      );
     }
   };
-  canRent();
+
+  useEffect(() => {
+    checkRegistered();
+  }, [currentAddress]);
 
   return (
     <div className="container dashboard-form">
@@ -47,6 +63,15 @@ export default function DashboardForm({ contract, provider }) {
             onChange={(e) => setLastName(e.target.value)}
             value={lastName}
           ></input>
+          <select
+            className="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <option value="renter">Renter</option>
+            <option value="owner">Owner</option>
+          </select>
           <button className="button-class form-submit-button" type="submit">
             Submit
           </button>

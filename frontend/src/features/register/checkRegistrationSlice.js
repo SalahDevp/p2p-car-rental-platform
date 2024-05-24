@@ -8,8 +8,9 @@ export const checkRegistrationSlice = createSlice({
   name: "registrator",
   initialState,
   reducers: {
-    register: (state) => {
+    register: (state, action) => {
       state.registered = true;
+      state.role = action.payload.role;
     },
     unregister: (state) => {
       state.registered = false;
