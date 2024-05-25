@@ -143,7 +143,7 @@ contract CarChain {
     }
 
     // deposit eth in the rental account in the sc
-    function Deposit(address walletAddress) public payable {
+    function deposit(address walletAddress) public payable {
         renters[walletAddress].balance += msg.value;
     }
 
