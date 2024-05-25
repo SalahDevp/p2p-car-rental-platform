@@ -24,7 +24,7 @@ export default function RenterInfo({ contract }) {
     const lastName = currentRenter[2];
     const name = firstName + " " + lastName;
     setName(name);
-    const isRenting = !currentAddress[3];
+    const isRenting = !currentRenter[3];
     setIsRenting(isRenting);
     const balance = ethers.utils.formatEther(currentRenter[5]);
     setBalance(balance);
@@ -53,14 +53,19 @@ export default function RenterInfo({ contract }) {
   useEffect(() => {
     getParamsOfRenter().catch(console.error);
   }, []);
+
+  const calculateDuration = (start) => {
+    const now = new Date();
+    const duration = Math.floor((now - start) / 60000);
+    setTotalDuration(duration);
+  };
   //update rent time every minute
   useEffect(() => {
     if (!isRenting) return;
+    calculateDuration(rentStart);
     const intervalId = setInterval(() => {
       if (rentStart) {
-        const now = new Date();
-        const duration = Math.floor((now - rentStart) / 60000);
-        setTotalDuration(duration);
+        calculateDuration(rentStart);
       }
     }, 60000);
 

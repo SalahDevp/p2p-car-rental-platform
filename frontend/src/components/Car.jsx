@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./DashboardFleet.scss";
 import vwPolo from "../assets/vwPolo.png";
-import tucson from "../assets/tucson.png";
-import corolla from "../assets/corolla.png";
-import gear from "../assets/gear.png";
-import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
-import LuggageIcon from "@mui/icons-material/Luggage";
 import { TbBrandAsana } from "react-icons/tb";
 import { FaCarAlt } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
@@ -25,6 +20,7 @@ function Car({ contract, carId }) {
     price: "",
     minDeposit: "",
   });
+  const role = useSelector((state) => state.registrator.role);
   const getCar = async () => {
     const car = await contract.cars(carId);
     setCar({
@@ -37,8 +33,22 @@ function Car({ contract, carId }) {
     getCar();
   }, [contract, carId]);
 
-  const pickUpHandler = () => {};
-  const dropOffHandler = () => {};
+  const pickUpHandler = async () => {
+    try {
+      const tx = await contract.pickUp(carId);
+      await tx.wait();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+  const dropOffHandler = async () => {
+    try {
+      const tx = await contract.dropOff();
+      await tx.wait();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <div className="car-container car1">
@@ -66,22 +76,24 @@ function Car({ contract, carId }) {
           <li>Minimum deposit: {car.minDeposit}</li>
         </ul>
       </div>
-      <div className="button-box">
-        <button
-          className="button-class rent-car-button"
-          type="submit"
-          onClick={() => pickUpHandler()}
-        >
-          Pick Up
-        </button>
-        <button
-          className="button-class rent-car-button"
-          type="submit"
-          onClick={() => dropOffHandler()}
-        >
-          Drop off
-        </button>
-      </div>
+      {role === "renter" && (
+        <div className="button-box">
+          <button
+            className="button-class rent-car-button"
+            type="submit"
+            onClick={() => pickUpHandler()}
+          >
+            Pick Up
+          </button>
+          <button
+            className="button-class rent-car-button"
+            type="submit"
+            onClick={() => dropOffHandler()}
+          >
+            Drop off
+          </button>
+        </div>
+      )}
     </div>
   );
 }

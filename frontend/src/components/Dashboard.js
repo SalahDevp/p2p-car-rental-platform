@@ -21,7 +21,7 @@ export default function Dashboard() {
   const currentAddress = useSelector((state) => state.currentAddress.address);
   const role = useSelector((state) => state.registrator.role);
   const dispatch = useDispatch();
-  const contractAddress = "0xB902CdeDA9fcAA57268EEaE3fE7854ffB08116C6";
+  const contractAddress = "0xCc4EA8E9AD423a781221a423F9993c806164d8d6";
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
   const signer = provider.getSigner();
 

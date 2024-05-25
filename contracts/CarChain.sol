@@ -20,6 +20,7 @@ contract CarChain {
         uint256 price;
         uint256 minDeposit; //minimum deposit to rent the car
         bool available;
+        address ownerAddress;
     }
 
     struct Owner {
@@ -69,7 +70,7 @@ contract CarChain {
         return lastCarId;
     }
 
-    //        --------------Renter functions --------------
+    //        --------------Owner functions --------------
 
     function addCar(
         string memory make,
@@ -91,7 +92,8 @@ contract CarChain {
             licensePlate,
             price,
             minDeposit,
-            true
+            true,
+            ownerAddress
         );
         owners[ownerAddress].carIds.push(carId);
         carIds.push(carId);
@@ -188,6 +190,7 @@ contract CarChain {
             renters[walletAddress].rentedCarId != 0,
             "you have to rent a car first"
         );
+        renters[walletAddress].rentEnd = block.timestamp;
         //set amount of due
         payDue(walletAddress, carId);
 
@@ -195,7 +198,6 @@ contract CarChain {
         renters[walletAddress].reservedBalance = 0;
         renters[walletAddress].rentedCarId = 0;
         cars[carId].available = true;
-        renters[walletAddress].rentEnd = block.timestamp;
     }
 
     function renterTimespan(
@@ -235,6 +237,8 @@ contract CarChain {
             "You don't have enought funds to cover payment. Please make a deposit."
         );
         renters[walletAddress].balance -= due;
+        address ownerAddress = cars[carId].ownerAddress;
+        owners[ownerAddress].balance += due;
     }
 
     function canRentCar(address walletAddress) public view returns (bool) {
