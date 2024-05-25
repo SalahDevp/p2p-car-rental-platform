@@ -1,4 +1,4 @@
-import "./RentCar.scss";
+import "./Info.scss";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 
-export default function RentCar({ contract }) {
+export default function RenterInfo({ contract }) {
   const [ethDepositAmount, setEthDepositAmount] = useState("");
   const [balance, setBalance] = useState("0.0");
   const [reserved, setReserved] = useState("0.0");

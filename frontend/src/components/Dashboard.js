@@ -6,10 +6,11 @@ import "./Dashboard.scss";
 import DashboardLogin from "./DashboardLogin";
 import DashboardFleet from "./DashboardFleet";
 import DashboardForm from "./DashboardForm";
-import RentCar from "./RentCar";
+import RenterInfo from "./RenterInfo";
 import { ethers } from "ethers";
 import contractAbi from "../assets/CarChain.json";
 import AddCarForm from "./AddCarForm";
+import OwnerInfo from "./OwnerInfo";
 require("dotenv").config();
 
 export default function Dashboard() {
@@ -64,13 +65,15 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <RentCar contract={contract} />
             {role === "owner" ? (
               <div className="dashboard-form-row">
+                <OwnerInfo contract={contract} />
                 <AddCarForm contract={contract} />
               </div>
             ) : (
-              <div className="dashboard-form-row"></div>
+              <div className="dashboard-form-row">
+                <RenterInfo contract={contract} />
+              </div>
             )}
           </>
         )}
