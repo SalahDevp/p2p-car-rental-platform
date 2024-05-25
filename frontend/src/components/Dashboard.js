@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { connect, disconnect } from "../features/connect/checkConnectionSlice";
 import { updateAddress } from "../features/currentAddress/currentAddresSlice";
@@ -9,6 +9,7 @@ import DashboardForm from "./DashboardForm";
 import RentCar from "./RentCar";
 import { ethers } from "ethers";
 import contractAbi from "../assets/CarChain.json";
+import AddCarForm from "./AddCarForm";
 require("dotenv").config();
 
 export default function Dashboard() {
@@ -17,8 +18,9 @@ export default function Dashboard() {
   const connected = useSelector((state) => state.connector.connected);
   const registered = useSelector((state) => state.registrator.registered);
   const currentAddress = useSelector((state) => state.currentAddress.address);
+  const role = useSelector((state) => state.registrator.role);
   const dispatch = useDispatch();
-  const contractAddress = "0xff1B0B8Acc520C94BD10CB0870020F22070c6692";
+  const contractAddress = "0x9958F9f3A9dA96f1e31786B936a1Bfc368A6d4D2";
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
   const signer = provider.getSigner();
 
@@ -47,11 +49,9 @@ export default function Dashboard() {
     }
   }, [address]);
 
-  console.log(contractAddress);
-  const contract = new ethers.Contract(
-    contractAddress,
-    contractAbi.abi,
-    signer
+  const contract = useMemo(
+    () => new ethers.Contract(contractAddress, contractAbi.abi, signer),
+    []
   );
 
   return (
@@ -63,7 +63,18 @@ export default function Dashboard() {
             <DashboardForm contract={contract} provider={provider} />
           </div>
         ) : (
-          <RentCar contract={contract} />
+          <>
+            <RentCar contract={contract} />
+            {role === "owner" ? (
+              <div className="dashboard-form-row">
+                <AddCarForm contract={contract} />
+              </div>
+            ) : (
+              <div className="dashboard-form-row">
+                <DashboardForm contract={contract} provider={provider} />
+              </div>
+            )}
+          </>
         )}
       </div>
       <div className="dashboard-fleet-row">
