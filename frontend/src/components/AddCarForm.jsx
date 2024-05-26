@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { ethers } from "ethers";
 import "./AddCarForm.scss";
+import { toast } from "react-toastify";
 /*
 function addCar(
         string memory make,
@@ -27,7 +28,6 @@ function AddCarForm({ contract }) {
   const handleAddCar = async (e) => {
     e.preventDefault();
     try {
-      console.log(car);
       const addCar = await contract.addCar(
         car.make,
         car.model,
@@ -38,16 +38,17 @@ function AddCarForm({ contract }) {
         ethers.utils.parseEther(car.minDeposit)
       );
       await addCar.wait();
-      console.log(addCar);
-      //window.location.reload();
+      window.location.reload();
     } catch (e) {
       console.error(e);
+      toast.error(e.message);
     }
   };
   return (
     <div className="container dashboard-form">
       <div className="form-container add-car-form">
         <form onSubmit={(e) => handleAddCar(e)}>
+          <h2>Add Car:</h2>
           <input
             type="text"
             placeholder="make"

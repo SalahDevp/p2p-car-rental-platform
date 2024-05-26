@@ -66,6 +66,7 @@ export default function OwnerInfo({ contract }) {
               placeholder="eth amount"
               required
               value={withdraw}
+              onChange={(e) => setWithdraw(e.target.value)}
             ></input>
             <button
               className="button-class form-deposit-button"
@@ -76,6 +77,7 @@ export default function OwnerInfo({ contract }) {
           </form>
         </div>
       </div>
+      <div></div>
     </div>
   );
 }
