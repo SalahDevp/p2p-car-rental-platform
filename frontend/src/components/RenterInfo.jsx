@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 export default function RenterInfo({ contract }) {
   const [ethDepositAmount, setEthDepositAmount] = useState("");
   const [balance, setBalance] = useState("0.0");
-  const [reserved, setReserved] = useState("0.0");
+
   const [name, setName] = useState("");
   const [isRenting, setIsRenting] = useState(false);
   const [rentStart, setRentStart] = useState("");
@@ -29,8 +29,7 @@ export default function RenterInfo({ contract }) {
     setIsRenting(isRenting);
     const balance = ethers.utils.formatEther(currentRenter[5]);
     setBalance(balance);
-    const reserved = ethers.utils.formatEther(currentRenter[6]);
-    setReserved(reserved);
+
     const rentStart = new Date(currentRenter[7] * 1000);
     setRentStart(rentStart);
   };
@@ -99,10 +98,8 @@ export default function RenterInfo({ contract }) {
       </div>
       <div className="pulpit-stats">
         <div className="pulpit-box">
-          <p>Balance (Reserved)</p>
-          <pre>
-            {balance} ({reserved})
-          </pre>
+          <p>Balance</p>
+          <pre>{balance}</pre>
           <AccountBalanceWalletIcon className="pulpit-icon" />
         </div>
         <div className="pulpit-box">

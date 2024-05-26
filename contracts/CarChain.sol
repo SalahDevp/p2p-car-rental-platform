@@ -35,10 +35,10 @@ contract CarChain {
         address payable walletAddress;
         string firstName;
         string lastName;
-        bool canRent;
+        bool canRent; // false if renter is renting a car
         uint256 rentedCarId;
         uint256 balance;
-        uint256 reservedBalance; // balance that is reserved for the rent's deposit
+        uint256 licenseId; // we can use a zkp method to verify the license
         uint256 rentStart;
         uint256 rentEnd;
     }
@@ -63,7 +63,6 @@ contract CarChain {
         );
     }
 
-    //generate id by hashing license plate
     uint256 private lastCarId = 0;
 
     function generateCarId() private returns (uint256) {
@@ -82,6 +81,10 @@ contract CarChain {
     ) public {
         uint256 carId = generateCarId();
         address ownerAddress = msg.sender;
+        require(
+            owners[ownerAddress].walletAddress == ownerAddress,
+            "You have to be an owner to add a car"
+        );
         cars[carId] = Car(
             carId,
             make,
@@ -143,16 +146,19 @@ contract CarChain {
         return carIds;
     }
 
-    // deposit eth in the rental account in the sc
+    // deposit eth in the rental account in the smart contract
     function deposit(address walletAddress) public payable {
         renters[walletAddress].balance += msg.value;
     }
 
-    // withdraw deposited eth (minus due amount if any)
+    // withdraw deposited eth (if renter is not renting a car)
     function renterWithdraw(uint256 amount) public payable {
         address walletAddress = msg.sender;
-        uint256 withdrawable = renters[walletAddress].balance -
-            renters[walletAddress].reservedBalance;
+        require(
+            renters[walletAddress].canRent == true,
+            "You can not withdraw while renting a car"
+        );
+        uint256 withdrawable = renters[walletAddress].balance;
         require(amount <= withdrawable, "You cant withdraw more than you have");
 
         bool sent = payable(msg.sender).send(amount);
@@ -177,7 +183,6 @@ contract CarChain {
         renters[renterAddress].rentStart = block.timestamp;
         renters[renterAddress].canRent = false;
         renters[renterAddress].rentedCarId = carId;
-        renters[renterAddress].reservedBalance = cars[carId].minDeposit;
         cars[carId].available = false;
     }
 
@@ -190,11 +195,10 @@ contract CarChain {
             "you have to rent a car first"
         );
         renters[walletAddress].rentEnd = block.timestamp;
-        //set amount of due
+        //pay due amount
         payDue(walletAddress, carId);
 
         renters[walletAddress].canRent = true;
-        renters[walletAddress].reservedBalance = 0;
         renters[walletAddress].rentedCarId = 0;
         cars[carId].available = true;
     }
@@ -233,10 +237,11 @@ contract CarChain {
         uint256 due = timespanMinutes * cars[carId].price;
         require(
             renters[walletAddress].balance >= due,
-            "You don't have enought funds to cover payment. Please make a deposit."
+            "You don't have enough funds to cover payment. Please make a deposit."
         );
         renters[walletAddress].balance -= due;
         address ownerAddress = cars[carId].ownerAddress;
+        //transfer due amount to owner
         owners[ownerAddress].balance += due;
     }
 
@@ -244,7 +249,7 @@ contract CarChain {
         return renters[walletAddress].canRent;
     }
 
-    //         -------------- Owner functions --------------
+    //         -------------- Contract functions --------------
     // get contract balance
     function getContractBalance() public view returns (uint256) {
         return address(this).balance;
