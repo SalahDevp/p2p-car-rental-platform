@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.16;
 
-contract CarChain {
+contract CarRental {
     //set an owner of contract
     address public immutable i_owner;
 

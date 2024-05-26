@@ -8,7 +8,7 @@ import DashboardFleet from "./DashboardFleet";
 import DashboardForm from "./DashboardForm";
 import RenterInfo from "./RenterInfo";
 import { ethers } from "ethers";
-import contractAbi from "../assets/CarChain.json";
+import contractAbi from "../assets/CarRental.json";
 import AddCarForm from "./AddCarForm";
 import OwnerInfo from "./OwnerInfo";
 import { CONTRACT_ADDRESS } from "../config";

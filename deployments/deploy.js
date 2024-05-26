@@ -1,6 +1,6 @@
 async function main() {
-  const CarChainFactory = await ethers.getContractFactory("CarChain");
-  const carChain = await CarChainFactory.deploy();
+  const CarRentalFactory = await ethers.getContractFactory("CarRental");
+  const carChain = await CarRentalFactory.deploy();
   console.log("Contract Deployed to Address:", carChain.address);
 }
 main()
