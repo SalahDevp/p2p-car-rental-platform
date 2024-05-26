@@ -5,6 +5,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function RenterInfo({ contract }) {
   const [ethDepositAmount, setEthDepositAmount] = useState("");
@@ -20,7 +21,6 @@ export default function RenterInfo({ contract }) {
 
   const getParamsOfRenter = async () => {
     const currentRenter = await contract.renters(currentAddress);
-    console.log("currentRenter", currentRenter);
     const firstName = currentRenter[1];
     const lastName = currentRenter[2];
     const name = firstName + " " + lastName;
@@ -32,7 +32,6 @@ export default function RenterInfo({ contract }) {
     const reserved = ethers.utils.formatEther(currentRenter[6]);
     setReserved(reserved);
     const rentStart = new Date(currentRenter[7] * 1000);
-    console.log("rentStart", rentStart);
     setRentStart(rentStart);
   };
 
@@ -47,8 +46,13 @@ export default function RenterInfo({ contract }) {
       const balanceFormated = ethers.utils.formatEther(balance);
       setBalance(balanceFormated);
     };
-    deposit();
-    setEthDepositAmount("");
+    try {
+      deposit();
+      setEthDepositAmount("");
+    } catch (e) {
+      console.error(e);
+      toast.error("Deposit failed");
+    }
   };
 
   const handleWithdraw = async () => {
@@ -62,6 +66,7 @@ export default function RenterInfo({ contract }) {
       setWithdraw("");
     } catch (e) {
       console.error(e);
+      toast.error("Withdraw failed");
     }
   };
 

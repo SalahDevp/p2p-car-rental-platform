@@ -17,7 +17,6 @@ export default function DashboardFleet({ contract }) {
       ids = await contract.getOwnerCars(currentAddress);
     } else {
       ids = await contract.getAllCarIds();
-      console.log(ids);
     }
     dispatch(setCarIds({ ids }));
   };

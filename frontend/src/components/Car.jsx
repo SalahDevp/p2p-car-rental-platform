@@ -21,7 +21,19 @@ function Car({ contract, carId }) {
     price: "",
     minDeposit: "",
   });
+  const [isRenting, setIsRenting] = useState(false);
+  const [rentedCarId, setRentedCarId] = useState("");
   const role = useSelector((state) => state.registrator.role);
+  const currentAddress = useSelector((state) => state.currentAddress.address);
+
+  const isRentingCar = async () => {
+    if (role !== "renter") return;
+    const currentRenter = await contract.renters(currentAddress);
+    const isRenting = !currentRenter[3];
+    setIsRenting(isRenting);
+    const rentedCarId = currentRenter[4];
+    setRentedCarId(rentedCarId);
+  };
   const getCar = async () => {
     const car = await contract.cars(carId);
     setCar({
@@ -32,7 +44,8 @@ function Car({ contract, carId }) {
   };
   useEffect(() => {
     getCar();
-  }, [contract, carId]);
+    isRentingCar();
+  }, [contract, carId, currentAddress]);
 
   const pickUpHandler = async () => {
     try {
@@ -82,20 +95,24 @@ function Car({ contract, carId }) {
       </div>
       {role === "renter" && (
         <div className="button-box">
-          <button
-            className="button-class rent-car-button"
-            type="submit"
-            onClick={() => pickUpHandler()}
-          >
-            Pick Up
-          </button>
-          <button
-            className="button-class rent-car-button"
-            type="submit"
-            onClick={() => dropOffHandler()}
-          >
-            Drop off
-          </button>
+          {!isRenting && (
+            <button
+              className="button-class rent-car-button"
+              type="submit"
+              onClick={() => pickUpHandler()}
+            >
+              Pick Up
+            </button>
+          )}
+          {carId.toString() === rentedCarId.toString() && (
+            <button
+              className="button-class rent-car-button"
+              type="submit"
+              onClick={() => dropOffHandler()}
+            >
+              Drop off
+            </button>
+          )}
         </div>
       )}
     </div>

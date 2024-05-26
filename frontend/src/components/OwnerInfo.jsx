@@ -3,6 +3,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function OwnerInfo({ contract }) {
   const [balance, setBalance] = useState("0.0");
@@ -13,7 +14,6 @@ export default function OwnerInfo({ contract }) {
 
   const getParamsOfOwner = async () => {
     const currentOwner = await contract.owners(currentAddress);
-    console.log("currentOwner", currentOwner);
     const firstName = currentOwner[1];
     const lastName = currentOwner[2];
     const name = firstName + " " + lastName;
@@ -33,6 +33,7 @@ export default function OwnerInfo({ contract }) {
       setWithdraw("");
     } catch (e) {
       console.error(e);
+      toast.error("Withdraw failed");
     }
   };
 
