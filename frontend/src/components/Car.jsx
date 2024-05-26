@@ -9,6 +9,7 @@ import { TbLicense } from "react-icons/tb";
 import { FaEthereum } from "react-icons/fa";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 function Car({ contract, carId }) {
   const [car, setCar] = useState({
@@ -37,14 +38,17 @@ function Car({ contract, carId }) {
     try {
       const tx = await contract.pickUp(carId);
       await tx.wait();
+      window.location.reload();
     } catch (error) {
       console.error(error.message);
+      toast.error("You can't rent this car");
     }
   };
   const dropOffHandler = async () => {
     try {
       const tx = await contract.dropOff();
       await tx.wait();
+      window.location.reload();
     } catch (error) {
       console.error(error.message);
     }
