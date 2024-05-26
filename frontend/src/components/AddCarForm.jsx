@@ -48,6 +48,7 @@ function AddCarForm({ contract }) {
     <div className="container dashboard-form">
       <div className="form-container add-car-form">
         <form onSubmit={(e) => handleAddCar(e)}>
+          <h2>Add Car:</h2>
           <input
             type="text"
             placeholder="make"

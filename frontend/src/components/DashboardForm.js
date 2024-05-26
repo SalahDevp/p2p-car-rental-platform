@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { register } from "../features/register/checkRegistrationSlice";
 
-export default function DashboardForm({ contract, provider }) {
+export default function DashboardForm({ contract }) {
   const currentAddress = useSelector((state) => state.currentAddress.address);
   const dispatch = useDispatch();
   const [name, setName] = useState("");

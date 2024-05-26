@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./DashboardFleet.scss";
-import vwPolo from "../assets/vwPolo.png";
+import carImage from "../assets/car.png";
 import { TbBrandAsana } from "react-icons/tb";
 import { FaCarAlt } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
@@ -52,7 +52,7 @@ function Car({ contract, carId }) {
 
   return (
     <div className="car-container car1">
-      <img className="car-img" src={vwPolo} alt="vw Polo" />
+      <img className="car-img" src={carImage} alt="vw Polo" />
       <div className="car-description">
         <ul>
           <li>

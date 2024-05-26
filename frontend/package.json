@@ -21,7 +21,8 @@
     "react-router": "^6.4.1",
     "react-router-dom": "^6.4.0",
     "react-scripts": "4.0.2",
-    "redux": "^4.2.0",
+    "redux": "^5.0.0",
+    "react-toastify": "^8.0.5",
     "sass": "^1.54.9"
   },
   "scripts": {
@@ -47,5 +48,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "//": "See https://github.com/facebook/create-react-app/issues/11773",
+    "react-error-overlay": "6.0.9"
   }
 }

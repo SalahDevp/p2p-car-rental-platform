@@ -48,6 +48,7 @@ contract CarChain {
     mapping(uint256 => Car) public cars;
     uint256[] public carIds;
 
+    //        --------------Owner functions --------------
     function addOwner(
         address payable walletAddress,
         string memory firstName,
@@ -69,8 +70,6 @@ contract CarChain {
         lastCarId += 1;
         return lastCarId;
     }
-
-    //        --------------Owner functions --------------
 
     function addCar(
         string memory make,
