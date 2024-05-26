@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 export default function OwnerInfo({ contract }) {
   const [balance, setBalance] = useState("0.0");
   const [name, setName] = useState("");
+  const [withdraw, setWithdraw] = useState("");
 
   const currentAddress = useSelector((state) => state.currentAddress.address);
 
@@ -19,6 +20,20 @@ export default function OwnerInfo({ contract }) {
     setName(name);
     const balance = ethers.utils.formatEther(currentOwner[3]);
     setBalance(balance);
+  };
+
+  const handleWithdraw = async () => {
+    const amount = ethers.utils.parseEther(withdraw);
+    try {
+      const tx = await contract.ownerWithdraw(amount);
+      await tx.wait();
+      const balance = await contract.getOwnerBalance(currentAddress);
+      const balanceFormated = ethers.utils.formatEther(balance);
+      setBalance(balanceFormated);
+      setWithdraw("");
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -38,30 +53,28 @@ export default function OwnerInfo({ contract }) {
         </div>
       </div>
       <div className="pulpit-payments">
-        {/* <div className="deposit-eth-box">
+        <div className="deposit-eth-box">
           <form
             onSubmit={(e) => {
               e.preventDefault();
             }}
           >
-            <h2>Repay Your Due</h2>
+            <h2>Withdraw</h2>
             <input
               className="payment-input"
               type="number"
               placeholder="eth amount"
               required
-              disabled
-              value={due}
+              value={withdraw}
             ></input>
             <button
               className="button-class form-deposit-button"
-              type="submit"
-              onClick={() => handleRepay()}
+              onClick={() => handleWithdraw()}
             >
-              Repay
+              withdraw
             </button>
           </form>
-        </div> */}
+        </div>
       </div>
     </div>
   );

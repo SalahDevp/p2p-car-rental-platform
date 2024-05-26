@@ -111,14 +111,14 @@ contract CarChain {
         return owners[ownerAddress].balance;
     }
 
-    function ownerWithdraw() public payable {
+    function ownerWithdraw(uint256 amount) public payable {
         address ownerAddress = msg.sender;
         uint256 withdrawable = owners[ownerAddress].balance;
-        require(withdrawable > 0, "You have no money to withdraw");
+        require(amount <= withdrawable, "You cant withdraw more than you have");
 
-        bool sent = payable(msg.sender).send(withdrawable);
+        bool sent = payable(msg.sender).send(amount);
         require(sent, "Failed to send Ether");
-        owners[ownerAddress].balance = 0;
+        owners[ownerAddress].balance -= amount;
     }
 
     //          -------------- Renter functions --------------
@@ -150,15 +150,15 @@ contract CarChain {
     }
 
     // withdraw deposited eth (minus due amount if any)
-    function renterWithdraw() public payable {
+    function renterWithdraw(uint256 amount) public payable {
         address walletAddress = msg.sender;
         uint256 withdrawable = renters[walletAddress].balance -
             renters[walletAddress].reservedBalance;
-        require(withdrawable > 0, "You have no money to withdraw");
+        require(amount <= withdrawable, "You cant withdraw more than you have");
 
-        bool sent = payable(msg.sender).send(withdrawable);
+        bool sent = payable(msg.sender).send(amount);
         require(sent, "Failed to send Ether");
-        renters[walletAddress].balance -= withdrawable;
+        renters[walletAddress].balance -= amount;
     }
 
     // pickUp a car

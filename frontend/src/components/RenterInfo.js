@@ -14,6 +14,7 @@ export default function RenterInfo({ contract }) {
   const [isRenting, setIsRenting] = useState(false);
   const [rentStart, setRentStart] = useState("");
   const [totalDuration, setTotalDuration] = useState(0);
+  const [withdraw, setWithdraw] = useState("");
 
   const currentAddress = useSelector((state) => state.currentAddress.address);
 
@@ -48,6 +49,20 @@ export default function RenterInfo({ contract }) {
     };
     deposit();
     setEthDepositAmount("");
+  };
+
+  const handleWithdraw = async () => {
+    const amount = ethers.utils.parseEther(withdraw);
+    try {
+      const tx = await contract.renterWithdraw(amount);
+      await tx.wait();
+      const balance = await contract.balanceOfRenter(currentAddress);
+      const balanceFormated = ethers.utils.formatEther(balance);
+      setBalance(balanceFormated);
+      setWithdraw("");
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -121,30 +136,31 @@ export default function RenterInfo({ contract }) {
             </button>
           </form>
         </div>
-        {/* <div className="deposit-eth-box">
+        <div className="deposit-eth-box">
           <form
             onSubmit={(e) => {
               e.preventDefault();
             }}
           >
-            <h2>Repay Your Due</h2>
+            <h2>Withdraw</h2>
             <input
               className="payment-input"
               type="number"
               placeholder="eth amount"
               required
-              disabled
-              value={due}
+              onChange={(e) => {
+                setWithdraw(e.target.value);
+              }}
+              value={withdraw}
             ></input>
             <button
               className="button-class form-deposit-button"
-              type="submit"
-              onClick={() => handleRepay()}
+              onClick={() => handleWithdraw()}
             >
-              Repay
+              withdraw
             </button>
           </form>
-        </div> */}
+        </div>
       </div>
     </div>
   );

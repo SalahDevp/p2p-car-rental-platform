@@ -1,3 +1,0 @@
-- add owners and cars
-- get all cars
-- rent a car(check deposit, no car already rented)
