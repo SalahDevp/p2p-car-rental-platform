@@ -13,7 +13,6 @@ import AddCarForm from "./AddCarForm";
 import OwnerInfo from "./OwnerInfo";
 import { CONTRACT_ADDRESS } from "../config";
 import { toast } from "react-toastify";
-require("dotenv").config();
 
 export default function Dashboard() {
   const [address, setAddress] = useState("");
