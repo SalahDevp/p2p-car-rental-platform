@@ -15,7 +15,8 @@ This project is a decentralized car rental service built using Solidity for the 
 
 <img width="1334" alt="image" src="https://github.com/SalahDevp/p2p-car-rental-platform/assets/89255483/4bd7b119-874f-4ad4-8272-185b8f0aef14">
 
-<img width="1333" alt="image" src="https://github.com/SalahDevp/p2p-car-rental-platform/assets/89255483/4ac51c9d-700d-4af2-8996-04529bd83c4a">
+<img width="1334" alt="image" src="https://github.com/SalahDevp/p2p-car-rental-platform/assets/89255483/5d84f5d8-9e44-44da-99af-9f1a4b3ed743">
+
 
 
 
