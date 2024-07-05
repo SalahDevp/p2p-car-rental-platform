@@ -102,11 +102,11 @@ export default function RenterInfo({ contract }) {
           <pre>{balance}</pre>
           <AccountBalanceWalletIcon className="pulpit-icon" />
         </div>
-        <div className="pulpit-box">
+        {/* <div className="pulpit-box">
           <p>Eth Due</p>
           <pre>{" . "}</pre>
           <AttachMoneyIcon className="pulpit-icon" />
-        </div>
+        </div> */}
         <div className={!isRenting ? "pulpit-box" : "pulpit-box active"}>
           <p>Rent time</p>
           <pre>{totalDuration} min</pre>
